@@ -1,16 +1,17 @@
-import { useState } from "react";
+import {  useState } from "react";
 
 const Form = (props) => {
   const [inputValue, setInputValue] = useState(""); // Use state to manage the input value
-
+  
   // Handling the form submit 
   const handleSubmit = (e) => {
     e.preventDefault();
     // condition to check the input have some value 
+ 
     if (inputValue != "") {
       props.onFormSubmit(inputValue);
       setInputValue(""); // Clear the input field by updating the state
-
+  
     }
     else{
       alert("Please Add something")
@@ -18,6 +19,7 @@ const Form = (props) => {
   };
   
   const handleInputChange = (e) => {
+    //  console.log(e.target.value)
     setInputValue(e.target.value); // Update the inputValue state as the user types
   };
 

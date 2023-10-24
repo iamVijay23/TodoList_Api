@@ -6,32 +6,58 @@ import Navbar from "./Navbar";
 
 const App = () => {
   const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // Api Call here 
   useEffect(() => {
-    // Fetch todos from the API when the component mounts
-    fetch("https://jsonplaceholder.typicode.com/todos")
-      .then((response) => response.json())
-      .then((data) => setTodos(data));
-  }, []); // The empty dependency array ensures the effect runs only once
+    fetch("https://jsonplaceholder.typicode.com/todos?_limit=5")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setTodos(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("API Request Error:", error);
+        setLoading(false);
+      });
+  }, []);
+  
+  
 
   const handleSubmit = (text) => {
   
-    const newTodos = [text, ...todos];
-    setTodos(newTodos);
+
+    // Create a new to-do item object
+    const newTodo = {
+      id: todos.length + 1, // You can generate a unique ID in your actual application
+      title: text,
+    };
+
+    // Update the todos state by adding the new to-do item
+    setTodos([newTodo,...todos]);
   };
 
-  //  based on the index we get we perform the delete operations 
   const handleDelete = (id) => {
-    
-    const updatedTodos = todos.filter((todo, index) => index !== id);
+
+    const updatedTodos = todos.filter((todo) => todo.id !== id);
+  // console.log(updatedTodos)
     setTodos(updatedTodos);
   };
 
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <Form onFormSubmit={handleSubmit} />
-      <List todos={todos} onDelete={handleDelete} /> {/* Pass the fetched todos as a prop to List */}
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <List todos={todos} onDelete={handleDelete} />
+       )}
     </div>
   );
 };
